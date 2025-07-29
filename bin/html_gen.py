@@ -3,13 +3,14 @@
 
 ###### Import ########
 
-import re 
+import re
 
 from os import listdir
 from os.path import isfile, join
 
 from bs4 import BeautifulSoup
 from fontTools import ttLib
+from io import open
 
 ###### Variable ######
 
@@ -45,45 +46,45 @@ def get_new_section(soup, key, attrs):
     h1 = soup.new_tag("h1")
     h1.append(key.title())
     section.append(h1)
-    
+
     return section
 
 def get_new_li(soup, key, icon, attrs):
-    
+
     li = soup.new_tag("li", attrs=attrs["li"])
     div = soup.new_tag("div", attrs=attrs["div"])
     span_img = soup.new_tag("span", attrs=attrs["span_img"])
     div2 = soup.new_tag("div", attrs=attrs["div2"])
     span_string = soup.new_tag("span", attrs=attrs["span_string"])
-    
+
     i = soup.new_tag("i", attrs={"class":f"fa-{key} fa-{icon}", **attrs["i"]})
-    
+
     span_img.append(i)
     span_string.append(icon)
     div.append(span_img)
     div2.append(span_string)
     div.append(div2)
     li.append(div)
-    
+
     return li
 
 def main():
     icons = get_icon_list(path)
     keys_reverse = sorted(list(icons.keys()))[::-1]
-    
+
     soup = BeautifulSoup("", "html.parser")
 
     for key in keys_reverse:
-        
+
         section = get_new_section(soup, key, attrs)
-        
+
         ul = soup.new_tag("ul", attrs=attrs["ul"])
-        
+
         for i in icons[key]:
             li = get_new_li(soup, key, i, attrs)
             ul.append(li)
 
-        section.append(ul)    
+        section.append(ul)
         soup.append(section)
 
     html = soup.prettify("utf-8")
